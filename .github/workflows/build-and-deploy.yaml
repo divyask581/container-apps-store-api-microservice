@@ -39,6 +39,7 @@ jobs:
       containerImage-node: ${{ steps.image-tag.outputs.image-node-service }}
       containerImage-python: ${{ steps.image-tag.outputs.image-python-service }}
       containerImage-go: ${{ steps.image-tag.outputs.image-go-service }}
+      containerImage-java: ${{ steps.image-tag.outputs.image-java-inventory-service }}
     strategy:
       matrix:
         services:
@@ -46,6 +47,7 @@ jobs:
             { "appName": "node-service", "directory": "./node-service" },
             { "appName": "python-service", "directory": "./python-service" },
             { "appName": "go-service", "directory": "./go-service" },
+            { "appName": "java-inventory-service", "directory": "./java-inventory-service" },
           ]
     steps:
       - name: Checkout repository
@@ -113,6 +115,8 @@ jobs:
                 pythonPort=5000 \
                 goImage='${{ needs.package-services.outputs.containerImage-go }}' \
                 goPort=8050 \
+                javaImage='${{ needs.package-services.outputs.containerImage-java }}' \
+                javaPort=8050 \
                 containerRegistry=${{ env.REGISTRY }} \
                 containerRegistryUsername=${{ github.actor }} \
                 containerRegistryPassword=${{ secrets.GITHUB_TOKEN }} \

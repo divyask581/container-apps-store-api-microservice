@@ -15,6 +15,10 @@ param goImage string
 param goPort int = 8050
 var goServiceAppName = 'go-app'
 
+param javaImage string
+param javaPort int = 8050
+var javaServiceAppName = 'java-inventory-service'
+
 param apimName string = 'store-api-mgmt-${uniqueString(resourceGroup().id)}'
 param deployApim bool = true
 param isPrivateRegistry bool = true
@@ -154,6 +158,34 @@ module goService 'container-http.bicep' = {
   }
 }
 
+// Java App
+module javaService 'container-http.bicep' = {
+  name: '${deployment().name}--${javaServiceAppName}'
+  dependsOn: [
+    environment
+  ]
+  params: {
+    enableIngress: true
+    isExternalIngress: false
+    location: location
+    environmentName: environmentName
+    containerAppName: javaServiceAppName
+    containerImage: javaImage
+    containerPort: javaPort
+    isPrivateRegistry: isPrivateRegistry
+    minReplicas: minReplicas
+    containerRegistry: containerRegistry
+    registryPassword: registryPassword
+    containerRegistryUsername: containerRegistryUsername
+    revisionMode: 'Single'
+    secrets: isPrivateRegistry ? [
+      {
+        name: registryPassword
+        value: containerRegistryPassword
+      }
+    ] : []
+  }
+}
 
 // Node App
 module nodeService 'container-http.bicep' = {
@@ -182,7 +214,7 @@ module nodeService 'container-http.bicep' = {
       }
       {
         name: 'INVENTORY_SERVICE_NAME'
-        value: goServiceAppName
+        value: javaServiceAppName
       }
     ]
     secrets: [
@@ -210,4 +242,5 @@ module apimStoreApi 'api-management-api.bicep' = if (deployApim) {
 output nodeFqdn string = nodeService.outputs.fqdn
 output pythonFqdn string = pythonService.outputs.fqdn
 output goFqdn string = goService.outputs.fqdn
+output javaFqdn string = javaService.outputs.fqdn
 output apimFqdn string = deployApim ? apim.outputs.fqdn : 'API Management not deployed'
