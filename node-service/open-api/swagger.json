@@ -87,6 +87,56 @@
           }
         }
       }
+    },
+    "/pricing": {
+      "get": {
+        "description": "Get pricing information",
+        "parameters": [
+          {
+            "name": "key",
+            "type": "string",
+            "required": true,
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Create or update pricing information",
+        "parameters": [
+          {
+            "name": "pricing",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "key": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": true,
+            "in": "body"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
     }
   }
 }

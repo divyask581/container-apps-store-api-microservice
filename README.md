@@ -10,11 +10,11 @@ Dapr is a CNCF project that helps developers overcome the inherent challenges pr
 
 ![image of architecture](./assets/arch.png)
 
-There are three main microservices in the solution.
+There are four main microservices in the solution.
 
 #### Store API (`node-app`)
 
-The [`node-app`](./node-service) is an express.js API that exposes three endpoints. `/` will return the primary index page, `/order` will return details on an order (retrieved from the **order service**), and `/inventory` will return details on an inventory item (retrieved from the **inventory service**).
+The [`node-app`](./node-service) is an express.js API that exposes four endpoints. `/` will return the primary index page, `/order` will return details on an order (retrieved from the **order service**), `/inventory` will return details on an inventory item (retrieved from the **inventory service**), and `/pricing` will return details on pricing information (retrieved from the **pricing service**).
 
 #### Order Service (`python-app`)
 
@@ -23,6 +23,10 @@ The [`python-app`](./python-service) is a Python flask app that will retrieve an
 #### Inventory Service (`go-app`)
 
 The [`go-app`](./go-service) is a Go mux app that will retrieve and store the state of inventory. For this sample, the mux app just returns back a static value.
+
+#### Pricing Service (`pricing-app`)
+
+The [`pricing-app`](./node-service) is an express.js API that will retrieve and store the state of pricing information. It uses [Dapr state management](https://docs.dapr.io/developing-applications/building-blocks/state-management/state-management-overview/) to store the state of the pricing information. When deployed in Container Apps, Dapr is configured to point to an Azure Cosmos DB to back the state.
 
 ## Deploy via GitHub Actions 
 
@@ -48,12 +52,10 @@ The entire solution is configured with [GitHub Actions](https://github.com/featu
    - Create an API Management instance to frontend the node-app API endpoints **(optional)**
    - Deploy Container Apps for each of the microservices
 
-4. Once the GitHub Actions have completed successfully, navigate to the [Azure Portal](https://portal.azure.com) and select the resource group you created. Open the `node-app` container, and browse to the URL. You should see the sample application running. You can go through the UX to create an order through the order microservice, and then navigate to the `/orders?id=foo` endpoint and `/inventory?id=foo` to get the status via other microservices.
+4. Once the GitHub Actions have completed successfully, navigate to the [Azure Portal](https://portal.azure.com) and select the resource group you created. Open the `node-app` container, and browse to the URL. You should see the sample application running. You can go through the UX to create an order through the order microservice, and then navigate to the `/orders?id=foo` endpoint, `/inventory?id=foo`, and `/pricing?key=foo` to get the status via other microservices.
 
 5. After calling each microservice, you can open the application insights resource created and select the **Application Map**, you should see a visualization of your calls between Container Apps (note: it may take a few minutes for the app insights data to ingest and process into the app map view).
 
 ## Build and Run
 
 [Click here for instructions on building and running the application locally](build-and-run.md)
-
-

@@ -7,6 +7,7 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var ordersRouter = require('./routes/orders');
 var inventoryRouter = require('./routes/inventory');
+var pricingRouter = require('./routes/pricing');
 
 const appPort = process.env.PORT || 3000; 
 var app = express();
@@ -29,7 +30,7 @@ app.use(express.static(path.join(__dirname, 'open-api')));
 app.use('/', indexRouter);
 app.use('/order', ordersRouter);
 app.use('/inventory', inventoryRouter);
-
+app.use('/pricing', pricingRouter);
 
 
 // catch 404 and forward to error handler

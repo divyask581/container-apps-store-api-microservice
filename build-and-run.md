@@ -104,4 +104,10 @@ Run the `go-app` (inventory) service in a new terminal window:
 dapr run --app-id go-app --app-port 8050 --dapr-http-port 3502 --components-path ./dapr-components -- go run .
 ```
 
+Run the `pricing-app` (pricing) service in a new terminal window:
+
+```bash
+dapr run --app-id pricing-app --app-port 8080 --dapr-http-port 3503 --components-path ./dapr-components -- npm run start
+```
+
 `State management`: orders app calls the Dapr State Store APIs which are bound to a Redis container that is preinstalled with Dapr. When the application is later deployed to Azure Container Apps, the component config yaml will be modified to point to an Azure CosmosDb instance. No code changes will be needed since the Dapr State Store API is completely portable.
