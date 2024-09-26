@@ -48,4 +48,66 @@ router.post('/delete', async function(req, res ) {
   res.send(`${JSON.stringify(data.data)}`);
 });
 
+/* GET all orders with pagination and sorting by calling order microservice via dapr */
+router.get('/all', async function(req, res, next) {
+  try {
+    const page = req.query.page || 1;
+    const per_page = req.query.per_page || 10;
+    const sort_by = req.query.sort_by || 'id';
+    const sort_order = req.query.sort_order || 'asc';
+
+    var data = await axios.get(`${daprSidecar}/orders?page=${page}&per_page=${per_page}&sort_by=${sort_by}&sort_order=${sort_order}`, {
+      headers: {'dapr-app-id': `${orderService}`}
+    });
+
+    res.setHeader('Content-Type', 'application/json');
+    res.send(`${JSON.stringify(data.data)}`);
+  } catch (err) {
+    res.status(500).send(`<p>Error fetching orders<br/>Order microservice or dapr may not be running.<br/></p><br/><code>${err}</code>`);
+  }
+});
+
+/* GET filter orders by date range by calling order microservice via dapr */
+router.get('/filter', async function(req, res, next) {
+  try {
+    const start_date = req.query.start_date;
+    const end_date = req.query.end_date;
+
+    if (!start_date || !end_date) {
+      res.status(400).send('Invalid date range');
+      return;
+    }
+
+    var data = await axios.get(`${daprSidecar}/orders/filter?start_date=${start_date}&end_date=${end_date}`, {
+      headers: {'dapr-app-id': `${orderService}`}
+    });
+
+    res.setHeader('Content-Type', 'application/json');
+    res.send(`${JSON.stringify(data.data)}`);
+  } catch (err) {
+    res.status(500).send(`<p>Error filtering orders<br/>Order microservice or dapr may not be running.<br/></p><br/><code>${err}</code>`);
+  }
+});
+
+/* GET search orders by order ID by calling order microservice via dapr */
+router.get('/search', async function(req, res, next) {
+  try {
+    const order_id = req.query.order_id;
+
+    if (!order_id) {
+      res.status(400).send('Invalid order ID');
+      return;
+    }
+
+    var data = await axios.get(`${daprSidecar}/orders/search?order_id=${order_id}`, {
+      headers: {'dapr-app-id': `${orderService}`}
+    });
+
+    res.setHeader('Content-Type', 'application/json');
+    res.send(`${JSON.stringify(data.data)}`);
+  } catch (err) {
+    res.status(500).send(`<p>Error searching orders<br/>Order microservice or dapr may not be running.<br/></p><br/><code>${err}</code>`);
+  }
+});
+
 module.exports = router;
